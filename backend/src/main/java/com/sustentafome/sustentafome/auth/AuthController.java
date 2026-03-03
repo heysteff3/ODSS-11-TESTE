@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -18,12 +19,20 @@ public class AuthController {
     private final JwtService jwtService;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final EmailTokenService emailTokenService;
 
-    public AuthController(AuthenticationManager authenticationManager, JwtService jwtService, UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    private static final Pattern PASSWORD_RULE = Pattern.compile("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z0-9]).{8,16}$");
+
+    public AuthController(AuthenticationManager authenticationManager,
+                          JwtService jwtService,
+                          UserRepository userRepository,
+                          PasswordEncoder passwordEncoder,
+                          EmailTokenService emailTokenService) {
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.emailTokenService = emailTokenService;
     }
 
     @PostMapping("/login")
@@ -45,15 +54,48 @@ public class AuthController {
         return ResponseEntity.ok(new AuthResponse(newToken, token, user.getRole().name()));
     }
 
+    @PostMapping("/email-token")
+    public ResponseEntity<EmailTokenResponse> sendEmailToken(@RequestBody @Valid EmailTokenRequest request) {
+        if (userRepository.existsByEmail(request.email())) {
+            return ResponseEntity.status(409).body(new EmailTokenResponse("E-mail já cadastrado", null));
+        }
+        String code = emailTokenService.generateToken(request.email());
+        // Aqui deveria enviar o código por e-mail; para ambiente de dev retornamos o token para facilitar testes.
+        return ResponseEntity.ok(new EmailTokenResponse("Código enviado para o e-mail informado", code));
+    }
+
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@RequestBody @Valid AuthRequest request) {
+    public ResponseEntity<AuthResponse> fullRegister(@RequestBody @Valid RegisterRequest request) {
+        if (userRepository.existsByUsername(request.username())) {
+            return ResponseEntity.status(409).build();
+        }
+        if (userRepository.existsByEmail(request.email())) {
+            return ResponseEntity.status(409).build();
+        }
+        if (!request.password().equals(request.confirmPassword())) {
+            return ResponseEntity.badRequest().build();
+        }
+        if (!PASSWORD_RULE.matcher(request.password()).matches()) {
+            return ResponseEntity.badRequest().build();
+        }
+        if (!emailTokenService.validate(request.email(), request.verificationCode())) {
+            return ResponseEntity.status(400).build();
+        }
         AppUser user = AppUser.builder()
+                .firstName(request.firstName())
+                .lastName(request.lastName())
                 .username(request.username())
+                .email(request.email())
+                .phone(request.phone())
+                .emailVerified(true)
                 .password(passwordEncoder.encode(request.password()))
                 .role(UserRole.VISUALIZADOR)
                 .build();
         userRepository.save(user);
+        emailTokenService.consume(request.email());
+
         String token = jwtService.generateToken(user, Map.of("role", user.getRole().name()));
-        return ResponseEntity.ok(new AuthResponse(token, null, user.getRole().name()));
+        String refresh = jwtService.generateToken(user, Map.of("role", user.getRole().name(), "refresh", true));
+        return ResponseEntity.ok(new AuthResponse(token, refresh, user.getRole().name()));
     }
 }

@@ -1,4 +1,4 @@
-﻿import { Routes, Route, Link, useNavigate } from 'react-router-dom'
+import { Routes, Route, Link, useNavigate, Navigate, useLocation } from 'react-router-dom'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import Producao from './pages/Producao'
@@ -31,18 +31,29 @@ function Header() {
   )
 }
 
+function RequireAuth({ children }) {
+  const token = localStorage.getItem('token')
+  if (!token) return <Navigate to="/login" replace />
+  return children
+}
+
 export default function App() {
+  const location = useLocation()
+  const token = localStorage.getItem('token')
+  const showHeader = location.pathname !== '/login'
+
   return (
     <div>
-      <Header />
+      {showHeader && <Header />}
       <div className="container">
         <Routes>
           <Route path="/login" element={<Login />} />
-          <Route path="/producao" element={<Producao />} />
-          <Route path="/estoque" element={<Estoque />} />
-          <Route path="/doacoes" element={<Doacoes />} />
-          <Route path="/energia" element={<Energia />} />
-          <Route path="/" element={<Dashboard />} />
+          <Route path="/producao" element={<RequireAuth><Producao /></RequireAuth>} />
+          <Route path="/estoque" element={<RequireAuth><Estoque /></RequireAuth>} />
+          <Route path="/doacoes" element={<RequireAuth><Doacoes /></RequireAuth>} />
+          <Route path="/energia" element={<RequireAuth><Energia /></RequireAuth>} />
+          <Route path="/" element={token ? <Dashboard /> : <Navigate to="/login" replace />} />
+          <Route path="*" element={<Navigate to={token ? '/' : '/login'} replace />} />
         </Routes>
       </div>
     </div>

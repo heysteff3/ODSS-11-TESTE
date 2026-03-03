@@ -28,3 +28,15 @@ form { display:grid; gap:.25rem; width:100%; }
 .inline-fields > div { display:flex; flex-direction:column; width:100%; }
 
 .logo { height: 40px; object-fit: contain; }
+
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.login-card {
+  width: min(420px, 100%);
+}

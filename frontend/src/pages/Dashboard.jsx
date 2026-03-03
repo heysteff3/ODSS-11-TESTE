@@ -5,14 +5,29 @@ import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContai
 const today = new Date().toISOString().slice(0,10)
 const sevenAgo = new Date(Date.now() - 7*24*60*60*1000).toISOString().slice(0,10)
 
+const parseToken = (token) => {
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]))
+    const username = payload.sub || payload.username || ''
+    const role = payload.role || (Array.isArray(payload.roles) ? payload.roles[0] : payload.roles) || ''
+    return { username, role }
+  } catch {
+    return { username: '', role: '' }
+  }
+}
+
 export default function Dashboard() {
   const [producao, setProducao] = useState({})
   const [estoque, setEstoque] = useState({})
   const [doacoes, setDoacoes] = useState({})
   const [energia, setEnergia] = useState({})
   const [alertas, setAlertas] = useState({})
+  const [usuario, setUsuario] = useState({ username: '', role: '' })
 
   useEffect(() => {
+    const token = localStorage.getItem('token')
+    if (token) setUsuario(parseToken(token))
+
     const load = async () => {
       const [p, e, d, en, a] = await Promise.all([
         api.get(`/dashboard/producao?inicio=${sevenAgo}&fim=${today}`),
@@ -34,6 +49,18 @@ export default function Dashboard() {
 
   return (
     <div className="grid">
+      <div className="card" style={{gridColumn:'1 / -1', display:'flex', justifyContent:'space-between', alignItems:'center', gap:'1rem'}}>
+        <div>
+          <h3>Sessão ativa</h3>
+          <p>Nome: <strong>{usuario.username || 'Não identificado'}</strong></p>
+        </div>
+        <div style={{textAlign:'right'}}>
+          <p style={{margin:0, color:'var(--muted)'}}>Tipo de acesso</p>
+          <div className="badge" style={{background:'rgba(34,211,238,0.15)', color:'#67e8f9'}}>
+            {usuario.role || '—'}
+          </div>
+        </div>
+      </div>
       <div className="card">
         <h3>Produção (7d)</h3>
         <p>Lotes: {producao.totalLotes || 0}</p>
@@ -72,4 +99,3 @@ export default function Dashboard() {
     </div>
   )
 }
-

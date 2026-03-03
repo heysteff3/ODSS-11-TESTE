@@ -1,0 +1,25 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:ods11;MODE=MSSQLServer;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: ODS-ONU-11
+    password: Ab#2abcdef
+  jpa:
+    hibernate:
+      ddl-auto: update
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+    open-in-view: false
+  flyway:
+    enabled: false
+
+app:
+  jwt:
+    secret: ${APP_JWT_SECRET:dev-secret-0123456789dev-secret-0123456789}
+    expiration-seconds: ${APP_JWT_EXPIRATION_SECONDS:3600}
+
+server:
+  port: 8081

@@ -3,6 +3,9 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 .kotlin
+.tools/
+.idea/
+frontend/.env.local
 
 ### IntelliJ IDEA ###
 .idea/modules.xml

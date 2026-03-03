@@ -9,7 +9,14 @@ spring:
     hibernate:
       ddl-auto: validate
       naming:
-        physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+        physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
     properties:
       hibernate:
         dialect: org.hibernate.dialect.SQLServerDialect
+    open-in-view: false
+
+app:
+  jwt:
+    # valor padrão para desenvolvimento; sobrescreva via variável de ambiente APP_JWT_SECRET em produção
+    secret: ${APP_JWT_SECRET:12345678901234567890123456789012}
+    expiration-seconds: ${APP_JWT_EXPIRATION_SECONDS:3600}

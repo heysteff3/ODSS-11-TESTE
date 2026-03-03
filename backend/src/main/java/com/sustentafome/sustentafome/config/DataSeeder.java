@@ -35,10 +35,10 @@ public class DataSeeder {
         return args -> {
             if (userRepository.count() == 0) {
                 userRepository.saveAll(List.of(
-                        AppUser.builder().username("admin").password(passwordEncoder.encode("admin123")).role(UserRole.ADMIN).build(),
-                        AppUser.builder().username("operador").password(passwordEncoder.encode("operador123")).role(UserRole.OPERADOR).build(),
-                        AppUser.builder().username("logistica").password(passwordEncoder.encode("log123")).role(UserRole.LOGISTICA).build(),
-                        AppUser.builder().username("ong").password(passwordEncoder.encode("ong123")).role(UserRole.ONG).build()
+                        AppUser.builder().firstName("Admin").lastName("User").username("admin").email("admin@example.com").phone("111111111").emailVerified(true).password(passwordEncoder.encode("admin123")).role(UserRole.ADMIN).build(),
+                        AppUser.builder().firstName("Maria").lastName("Operadora").username("operador").email("operador@example.com").phone("222222222").emailVerified(true).password(passwordEncoder.encode("operador123")).role(UserRole.OPERADOR).build(),
+                        AppUser.builder().firstName("Lucas").lastName("Logistica").username("logistica").email("logistica@example.com").phone("333333333").emailVerified(true).password(passwordEncoder.encode("log123")).role(UserRole.LOGISTICA).build(),
+                        AppUser.builder().firstName("Olga").lastName("Ong").username("ong").email("ong@example.com").phone("444444444").emailVerified(true).password(passwordEncoder.encode("ong123")).role(UserRole.ONG).build()
                 ));
             }
 
