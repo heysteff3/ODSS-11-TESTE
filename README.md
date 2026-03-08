@@ -1,4 +1,4 @@
-# SustentaFome
+# Growing Together
 
 Plataforma web para rastrear producao, estoque, logistica de doacoes e cadeia energetica (biodigestor, biogas, geracao/consumo e recirculacao de CO2) em um ecossistema circular.
 
@@ -8,10 +8,10 @@ Plataforma web para rastrear producao, estoque, logistica de doacoes e cadeia en
 - **Orquestracao**: `docker-compose.yml` com Postgres 15, backend e frontend (Nginx). CORS ja libera `http://localhost:5173`.
 
 ## Estrutura do repositorio
-- `backend/` — API REST com seeds de usuarios, produtos, unidades produtivas, armazem e entidades beneficiarias.
-- `frontend/` — UI de dashboard (login, producao, estoque, doacoes, energia).
-- `docker-compose.yml` — stack local contendo Postgres + servicos.
-- `src/main/java/...Main.java` — stub gerado pelo IDE (nao usado).
+- `backend/` - API REST com seeds de usuarios, produtos, unidades produtivas, armazem e entidades beneficiarias.
+- `frontend/` - UI de dashboard (login, producao, estoque, doacoes, energia).
+- `docker-compose.yml` - stack local contendo Postgres + servicos.
+- `src/main/java/...Main.java` - stub gerado pelo IDE (nao usado).
 
 ## Como rodar
 ### 1) Dev rapido com H2 em memoria
@@ -39,7 +39,7 @@ mvn spring-boot:run
 O `application.yml` padrao aponta para SQL Server. Para trocar o banco, sobrescreva as propriedades do Spring:
 ```bash
 # exemplo Postgres local
-set SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/sustentafome
+set SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/growingtogether
 set SPRING_DATASOURCE_USERNAME=postgres
 set SPRING_DATASOURCE_PASSWORD=postgres
 set SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.PostgreSQLDialect
@@ -74,7 +74,7 @@ WHERE username = 'admin';
 ```bash
 cd "C:\Users\Injected\IdeaProjects\ODSS-11-TESTE"
 # Recomenda-se ajustar o service backend para receber as variaveis abaixo:
-# SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/sustentafome
+# SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/growingtogether
 # SPRING_DATASOURCE_USERNAME=postgres
 # SPRING_DATASOURCE_PASSWORD=postgres
 # SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.PostgreSQLDialect
@@ -86,17 +86,17 @@ docker-compose up --build
 - Frontend (Nginx): http://localhost:5173
 
 ## Variaveis importantes
-- `SPRING_DATASOURCE_URL`, `SPRING_DATASOURCE_USERNAME`, `SPRING_DATASOURCE_PASSWORD`, `SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT` — conexao do banco.
-- `SPRING_PROFILES_ACTIVE` — use `local` para H2.
-- `STAGE_DB_URL`, `STAGE_DB_USERNAME`, `STAGE_DB_PASSWORD` — usados no perfil `stage`.
-- `PROD_DB_URL`, `PROD_DB_USERNAME`, `PROD_DB_PASSWORD` — usados no perfil `prod`.
-- `SERVER_PORT` — porta do backend (default 8080, no perfil local 8081).
-- `APP_JWT_SECRET` / `APP_JWT_EXPIRATION_SECONDS` — chave e expiracao do JWT.
-- `APP_CORS_ALLOWED_ORIGINS`, `APP_CORS_ALLOWED_METHODS`, `APP_CORS_ALLOWED_HEADERS` — lista de CORS permitidos (default apenas http://localhost:5173).
-- `APP_REQUIRE_SSL` / `APP_SECURITY_REQUIRE_SSL` — força HTTPS quando true (ativo por default em `prod`); em dev local use false para evitar redirecionamento para 8443.
-- `APP_RATE_LIMIT_ENABLED`, `APP_RATE_LIMIT_RPM` — liga/desliga e define limite por IP+rota (default 120 rpm; prod default 80).
-- `SPRING_FLYWAY_VALIDATE` — mantém validação das migrações (default true nos ambientes controlados).
-- `VITE_API_URL` — base da API consumida pelo frontend (default `http://localhost:8080/api/v1`).
+- `SPRING_DATASOURCE_URL`, `SPRING_DATASOURCE_USERNAME`, `SPRING_DATASOURCE_PASSWORD`, `SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT` - conexao do banco.
+- `SPRING_PROFILES_ACTIVE` - use `local` para H2.
+- `STAGE_DB_URL`, `STAGE_DB_USERNAME`, `STAGE_DB_PASSWORD` - usados no perfil `stage`.
+- `PROD_DB_URL`, `PROD_DB_USERNAME`, `PROD_DB_PASSWORD` - usados no perfil `prod`.
+- `SERVER_PORT` - porta do backend (default 8080, no perfil local 8081).
+- `APP_JWT_SECRET` / `APP_JWT_EXPIRATION_SECONDS` - chave e expiracao do JWT.
+- `APP_CORS_ALLOWED_ORIGINS`, `APP_CORS_ALLOWED_METHODS`, `APP_CORS_ALLOWED_HEADERS` - lista de CORS permitidos (default apenas http://localhost:5173).
+- `APP_REQUIRE_SSL` / `APP_SECURITY_REQUIRE_SSL` - força HTTPS quando true (ativo por default em `prod`); em dev local use false para evitar redirecionamento para 8443.
+- `APP_RATE_LIMIT_ENABLED`, `APP_RATE_LIMIT_RPM` - liga/desliga e define limite por IP+rota (default 120 rpm; prod default 80).
+- `SPRING_FLYWAY_VALIDATE` - mantém validação das migrações (default true nos ambientes controlados).
+- `VITE_API_URL` - base da API consumida pelo frontend (default `http://localhost:8080/api/v1`).
 
 ## Usuarios seed (criados no startup)
 - admin / admin123 (ADMIN)
@@ -145,3 +145,5 @@ npm run dev -- --host    # http://localhost:5173
 cd backend
 mvn test
 ```
+
+

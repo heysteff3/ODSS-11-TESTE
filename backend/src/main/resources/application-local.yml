@@ -5,7 +5,7 @@ spring:
   datasource:
     url: jdbc:h2:mem:ods11;MODE=MSSQLServer;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
     driver-class-name: org.h2.Driver
-    username: ODS-ONU-11
+    username: GrowingTogether
     password: Ab#2abcdef
   jpa:
     hibernate:
@@ -26,3 +26,4 @@ app:
 
 server:
   port: 8081
+

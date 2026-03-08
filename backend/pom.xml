@@ -3,16 +3,16 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.example</groupId>
-        <artifactId>ODS_11_ONU</artifactId>
+        <artifactId>growing-together</artifactId>
         <version>1.0-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
 
-    <groupId>com.sustentafome</groupId>
-    <artifactId>sustentafome-backend</artifactId>
+    <groupId>com.growingtogether</groupId>
+    <artifactId>growing-together-backend</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>SustentaFome Backend</name>
-    <description>API SustentaFome</description>
+    <name>Growing Together Backend</name>
+    <description>API Growing Together</description>
 
     <properties>
         <java.version>17</java.version>

@@ -1,4 +1,4 @@
-ï»¿import { Routes, Route, Link, useNavigate, Navigate, useLocation } from 'react-router-dom'
+import { Routes, Route, Link, useNavigate, Navigate, useLocation } from 'react-router-dom'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import Producao from './pages/Producao'
@@ -17,14 +17,14 @@ function Header() {
     <header>
       <div style={{display:'flex',alignItems:'center',gap:'10px'}}>
         <Link to="/">
-          <img src="/logo.png" alt="SustentaFome" className="logo" />
+          <img src="/logo.png" alt="Growing Together" className="logo" />
         </Link>
       </div>
       <nav>
         <Link to="/">Dashboard</Link>
-        <Link to="/producao">ProduÃ§Ã£o</Link>
+        <Link to="/producao">Produção</Link>
         <Link to="/estoque">Estoque</Link>
-        <Link to="/doacoes">DoaÃ§Ãµes</Link>
+        <Link to="/doacoes">Doações</Link>
         <Link to="/rastreio">Rastreio</Link>
         <Link to="/energia">Energia</Link>
         <button className="button" style={{marginLeft:'1rem'}} onClick={logout}>Sair</button>
@@ -62,3 +62,4 @@ export default function App() {
     </div>
   )
 }
+

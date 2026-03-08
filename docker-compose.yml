@@ -5,7 +5,7 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: sustentafome
+      POSTGRES_DB: growingtogether
     volumes:
       - pgdata:/var/lib/postgresql/data
     ports:
@@ -15,10 +15,10 @@ services:
     environment:
       POSTGRES_HOST: db
       POSTGRES_PORT: 5432
-      POSTGRES_DB: sustentafome
+      POSTGRES_DB: growingtogether
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      JWT_SECRET: super-secret-jwt-sustentafome-2026
+      JWT_SECRET: super-secret-jwt-growingtogether-2026
     depends_on:
       - db
     ports:
@@ -31,3 +31,4 @@ services:
       - backend
 volumes:
   pgdata:
+
