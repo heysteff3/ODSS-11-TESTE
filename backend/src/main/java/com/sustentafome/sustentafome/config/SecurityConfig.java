@@ -2,6 +2,9 @@ package com.sustentafome.sustentafome.config;
 
 import com.sustentafome.sustentafome.auth.JwtAuthenticationFilter;
 import com.sustentafome.sustentafome.auth.UserRepository;
+import java.util.Arrays;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -25,6 +28,24 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final UserRepository userRepository;
+
+    @Value("${app.security.require-ssl:false}")
+    private boolean requireSsl;
+
+    @Value("${app.cors.allowed-origins:http://localhost:5173}")
+    private String allowedOrigins;
+
+    @Value("${app.cors.allowed-methods:GET,POST,PUT,DELETE}")
+    private String allowedMethods;
+
+    @Value("${app.cors.allowed-headers:Authorization,Content-Type,Accept,X-Requested-With}")
+    private String allowedHeaders;
+
+    @Value("${app.rate-limit.requests-per-minute:120}")
+    private int requestsPerMinute;
+
+    @Value("${app.rate-limit.enabled:true}")
+    private boolean rateLimitEnabled;
 
     public SecurityConfig(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -58,8 +79,15 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http,
                                                    JwtAuthenticationFilter jwtAuthFilter,
                                                    DaoAuthenticationProvider authenticationProvider) throws Exception {
+        RateLimitingFilter rateLimitingFilter = new RateLimitingFilter(requestsPerMinute, rateLimitEnabled);
+
         http.csrf(csrf -> csrf.disable())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .requiresChannel(channel -> {
+                    if (requireSsl) {
+                        channel.anyRequest().requiresSecure();
+                    }
+                })
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/actuator/**").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
@@ -72,6 +100,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authenticationProvider(authenticationProvider)
+                .addFilterBefore(rateLimitingFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
@@ -79,12 +108,19 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(java.util.List.of("http://localhost:5173"));
-        config.setAllowedMethods(java.util.List.of("GET","POST","PUT","DELETE","OPTIONS"));
-        config.setAllowedHeaders(java.util.List.of("*"));
+        config.setAllowedOrigins(splitAndTrim(allowedOrigins));
+        config.setAllowedMethods(splitAndTrim(allowedMethods));
+        config.setAllowedHeaders(splitAndTrim(allowedHeaders));
         config.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         return source;
+    }
+
+    private List<String> splitAndTrim(String csv) {
+        return Arrays.stream(csv.split(","))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .toList();
     }
 }

@@ -7,8 +7,10 @@ import java.time.LocalDate;
 public record LoteProducaoDTO(
         @NotNull Long unidadeId,
         @NotNull Long produtoId,
+        String codigoLote,
         LocalDate dataInicio,
         LocalDate dataFim,
+        LocalDate dataValidade,
         BigDecimal quantidade,
         String unidadeMedida,
         BigDecimal custoEstimado,

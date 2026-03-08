@@ -1,5 +1,6 @@
 package com.sustentafome.sustentafome.donation;
 
+import com.sustentafome.sustentafome.common.Auditable;
 import com.sustentafome.sustentafome.production.Product;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -13,7 +14,13 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class PedidoDoacao {
+@Table(indexes = {
+        @Index(name = "idx_pedido_produto", columnList = "produto_id"),
+        @Index(name = "idx_pedido_beneficiario", columnList = "beneficiario_id"),
+        @Index(name = "idx_pedido_status", columnList = "status"),
+        @Index(name = "idx_pedido_data", columnList = "data_pedido")
+})
+public class PedidoDoacao extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -27,6 +34,7 @@ public class PedidoDoacao {
     @ManyToOne(optional = false)
     private Product produto;
 
+    @Column(precision = 19, scale = 4)
     private BigDecimal quantidade;
 
     @Enumerated(EnumType.STRING)

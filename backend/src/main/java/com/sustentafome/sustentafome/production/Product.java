@@ -18,4 +18,16 @@ public class Product {
     private String nome;
 
     private String categoria;
+
+    /**
+     * Indica se o produto requer rastreabilidade por lote/validade.
+     * Controla regras de FEFO/PEPS na expedicao.
+     */
+    private Boolean perecivel = Boolean.FALSE;
+
+    /**
+     * Validade padrao em dias para novos lotes (opcional).
+     * Quando informado, a data de validade pode ser derivada a partir da data de inicio do lote.
+     */
+    private Integer validadeDiasPadrao;
 }

@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import com.sustentafome.sustentafome.common.OperationalMetrics;
+import io.micrometer.core.instrument.Timer;
+
 @RestController
 @RequestMapping("/api/v1/auth")
 public class AuthController {
@@ -20,6 +23,7 @@ public class AuthController {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final EmailTokenService emailTokenService;
+    private final OperationalMetrics operationalMetrics;
 
     private static final Pattern PASSWORD_RULE = Pattern.compile("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z0-9]).{8,16}$");
 
@@ -27,22 +31,29 @@ public class AuthController {
                           JwtService jwtService,
                           UserRepository userRepository,
                           PasswordEncoder passwordEncoder,
-                          EmailTokenService emailTokenService) {
+                          EmailTokenService emailTokenService,
+                          OperationalMetrics operationalMetrics) {
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.emailTokenService = emailTokenService;
+        this.operationalMetrics = operationalMetrics;
     }
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody @Valid AuthRequest request) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.username(), request.password()));
-        AppUser user = (AppUser) authentication.getPrincipal();
-        String token = jwtService.generateToken(user, Map.of("role", user.getRole().name()));
-        String refresh = jwtService.generateToken(user, Map.of("role", user.getRole().name(), "refresh", true));
-        return ResponseEntity.ok(new AuthResponse(token, refresh, user.getRole().name()));
+        Timer.Sample sample = Timer.start();
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(request.username(), request.password()));
+            AppUser user = (AppUser) authentication.getPrincipal();
+            String token = jwtService.generateToken(user, Map.of("role", user.getRole().name()));
+            String refresh = jwtService.generateToken(user, Map.of("role", user.getRole().name(), "refresh", true));
+            return ResponseEntity.ok(new AuthResponse(token, refresh, user.getRole().name()));
+        } finally {
+            operationalMetrics.recordLogin(sample);
+        }
     }
 
     @PostMapping("/refresh")

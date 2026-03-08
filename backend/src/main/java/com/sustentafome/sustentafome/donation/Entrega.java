@@ -1,5 +1,6 @@
 package com.sustentafome.sustentafome.donation;
 
+import com.sustentafome.sustentafome.common.Auditable;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,7 +12,12 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Entrega {
+@Table(indexes = {
+        @Index(name = "idx_entrega_status", columnList = "status"),
+        @Index(name = "idx_entrega_saida", columnList = "data_saida"),
+        @Index(name = "idx_entrega_entrega", columnList = "data_entrega")
+})
+public class Entrega extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

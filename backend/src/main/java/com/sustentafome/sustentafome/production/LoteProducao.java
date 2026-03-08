@@ -17,6 +17,12 @@ public class LoteProducao {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /**
+     * Codigo externo/etiqueta do lote (visivel na expedicao e inventario).
+     */
+    @Column(length = 64)
+    private String codigoLote;
+
     @ManyToOne(optional = false)
     private UnidadeProdutiva unidade;
 
@@ -25,6 +31,7 @@ public class LoteProducao {
 
     private LocalDate dataInicio;
     private LocalDate dataFim;
+    private LocalDate dataValidade;
     private BigDecimal quantidade;
     private String unidadeMedida;
     private BigDecimal custoEstimado;

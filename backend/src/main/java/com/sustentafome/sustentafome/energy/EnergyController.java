@@ -1,5 +1,6 @@
 package com.sustentafome.sustentafome.energy;
 
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -50,5 +51,24 @@ public class EnergyController {
     public ResponseEntity<SimulacaoResponse> simular(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate inicio,
                                                      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fim) {
         return ResponseEntity.ok(service.simular(inicio, fim));
+    }
+
+    @Operation(summary = "KPIs consolidados de energia", description = "Retorna geração, consumo, saldo, biogás, biomassa, CO2 e kg por kWh no período")
+    @GetMapping("/kpis")
+    public ResponseEntity<SimulacaoResponse> kpis(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate inicio,
+                                                  @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fim) {
+        return ResponseEntity.ok(service.kpis(inicio, fim));
+    }
+
+    @Operation(summary = "Importar leituras de energia via CSV", description = "CSV com colunas data,valor; tipo pode ser GERACAO ou CONSUMO")
+    @PostMapping("/leituras/import-csv")
+    public ResponseEntity<Integer> importarCsv(@RequestBody ImportLeituraCsvRequest request) {
+        return ResponseEntity.ok(service.importarCsv(request));
+    }
+
+    @Operation(summary = "Importar leituras de energia via API externa", description = "URL deve retornar lista de objetos {data, valor}; tipo pode ser GERACAO ou CONSUMO")
+    @PostMapping("/leituras/import-api")
+    public ResponseEntity<Integer> importarApi(@RequestBody ImportLeituraApiRequest request) {
+        return ResponseEntity.ok(service.importarApi(request));
     }
 }

@@ -1,6 +1,8 @@
 package com.sustentafome.sustentafome.production;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -15,18 +17,22 @@ public class ProductionService {
     private final ProductRepository productRepository;
     private final LoteProducaoRepository loteRepository;
 
+    @Cacheable(value = "produtos", key = "#page + '-' + #size")
     public Page<Product> listProducts(int page, int size) {
         return productRepository.findAll(PageRequest.of(page, size));
     }
 
+    @CacheEvict(value = "produtos", allEntries = true)
     public Product createProduct(Product product) {
         return productRepository.save(product);
     }
 
+    @Cacheable("unidades-produtivas")
     public List<UnidadeProdutiva> listUnidades() {
         return unidadeRepository.findAll();
     }
 
+    @CacheEvict(value = "unidades-produtivas", allEntries = true)
     public UnidadeProdutiva createUnidade(UnidadeProdutiva unidade) {
         return unidadeRepository.save(unidade);
     }
@@ -39,8 +45,14 @@ public class ProductionService {
         LoteProducao lote = new LoteProducao();
         lote.setUnidade(unidade);
         lote.setProduto(produto);
+        lote.setCodigoLote(dto.codigoLote());
         lote.setDataInicio(dto.dataInicio());
         lote.setDataFim(dto.dataFim());
+        if (dto.dataValidade() != null) {
+            lote.setDataValidade(dto.dataValidade());
+        } else if (produto.getValidadeDiasPadrao() != null && dto.dataInicio() != null) {
+            lote.setDataValidade(dto.dataInicio().plusDays(produto.getValidadeDiasPadrao()));
+        }
         lote.setQuantidade(dto.quantidade());
         lote.setUnidadeMedida(dto.unidadeMedida());
         lote.setCustoEstimado(dto.custoEstimado());

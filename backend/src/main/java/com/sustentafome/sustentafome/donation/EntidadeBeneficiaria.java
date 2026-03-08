@@ -1,5 +1,6 @@
 package com.sustentafome.sustentafome.donation;
 
+import com.sustentafome.sustentafome.common.Auditable;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class EntidadeBeneficiaria {
+public class EntidadeBeneficiaria extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

@@ -1,22 +1,64 @@
 spring:
+  profiles:
+    default: local
   datasource:
-    url: jdbc:sqlserver://dbonu.database.windows.net:1433;databaseName=DBonu;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;
-    username: ODS-ONU-11
-    password: Ab#2abcdef
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
-
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: none
       naming:
         physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
     properties:
       hibernate:
         dialect: org.hibernate.dialect.SQLServerDialect
     open-in-view: false
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    baseline-version: 0
+    validate-on-migrate: ${SPRING_FLYWAY_VALIDATE:true}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      probes:
+        enabled: true
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
+  tracing:
+    enabled: true
+    sampling:
+      probability: 1.0
+
+logging:
+  level:
+    root: INFO
+    org.springframework.web: INFO
 
 app:
   jwt:
-    # valor padrão para desenvolvimento; sobrescreva via variável de ambiente APP_JWT_SECRET em produção
-    secret: ${APP_JWT_SECRET:12345678901234567890123456789012}
+    secret: ${APP_JWT_SECRET:change-me}
     expiration-seconds: ${APP_JWT_EXPIRATION_SECONDS:3600}
+  cors:
+    allowed-origins: ${APP_CORS_ALLOWED_ORIGINS:http://localhost:5173}
+    allowed-methods: ${APP_CORS_ALLOWED_METHODS:GET,POST,PUT,DELETE,OPTIONS}
+    allowed-headers: ${APP_CORS_ALLOWED_HEADERS:Authorization,Content-Type,Accept,X-Requested-With}
+  security:
+    require-ssl: ${APP_REQUIRE_SSL:false}
+  rate-limit:
+    enabled: ${APP_RATE_LIMIT_ENABLED:true}
+    requests-per-minute: ${APP_RATE_LIMIT_RPM:120}
+  sla:
+    coleta-hours: ${APP_SLA_COLETA_HOURS:4}
+    entrega-hours: ${APP_SLA_ENTREGA_HOURS:12}
+    check-interval-ms: ${APP_SLA_CHECK_INTERVAL_MS:60000}
+  maps:
+    distance-matrix-url: ${APP_MAPS_DISTANCE_MATRIX_URL:}
+    api-key: ${APP_MAPS_API_KEY:}

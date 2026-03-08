@@ -1,10 +1,11 @@
-import { Routes, Route, Link, useNavigate, Navigate, useLocation } from 'react-router-dom'
+﻿import { Routes, Route, Link, useNavigate, Navigate, useLocation } from 'react-router-dom'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import Producao from './pages/Producao'
 import Estoque from './pages/Estoque'
 import Doacoes from './pages/Doacoes'
 import Energia from './pages/Energia'
+import Rastreio from './pages/Rastreio'
 
 function Header() {
   const navigate = useNavigate()
@@ -24,6 +25,7 @@ function Header() {
         <Link to="/producao">Produção</Link>
         <Link to="/estoque">Estoque</Link>
         <Link to="/doacoes">Doações</Link>
+        <Link to="/rastreio">Rastreio</Link>
         <Link to="/energia">Energia</Link>
         <button className="button" style={{marginLeft:'1rem'}} onClick={logout}>Sair</button>
       </nav>
@@ -51,6 +53,7 @@ export default function App() {
           <Route path="/producao" element={<RequireAuth><Producao /></RequireAuth>} />
           <Route path="/estoque" element={<RequireAuth><Estoque /></RequireAuth>} />
           <Route path="/doacoes" element={<RequireAuth><Doacoes /></RequireAuth>} />
+          <Route path="/rastreio" element={<RequireAuth><Rastreio /></RequireAuth>} />
           <Route path="/energia" element={<RequireAuth><Energia /></RequireAuth>} />
           <Route path="/" element={token ? <Dashboard /> : <Navigate to="/login" replace />} />
           <Route path="*" element={<Navigate to={token ? '/' : '/login'} replace />} />

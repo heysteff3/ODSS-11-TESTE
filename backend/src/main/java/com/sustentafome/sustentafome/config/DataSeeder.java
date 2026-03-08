@@ -16,11 +16,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
 
 @Configuration
+@Profile("!test")
 @RequiredArgsConstructor
 public class DataSeeder {
 
@@ -44,15 +46,15 @@ public class DataSeeder {
 
             if (productRepository.count() == 0) {
                 productRepository.saveAll(List.of(
-                        new Product(null, "Batata Inglesa", "ALIMENTO"),
-                        new Product(null, "Batata Doce", "ALIMENTO"),
-                        new Product(null, "Shiitake", "ALIMENTO"),
-                        new Product(null, "Cogumelo Ostra", "ALIMENTO/RACAO"),
-                        new Product(null, "Peixe", "ALIMENTO"),
-                        new Product(null, "Alcool", "ENERGIA"),
-                        new Product(null, "Biomassa", "INSUMO"),
-                        new Product(null, "Biofertilizante", "INSUMO"),
-                        new Product(null, "Biogas", "ENERGIA")
+                        new Product(null, "Batata Inglesa", "ALIMENTO", false, null),
+                        new Product(null, "Batata Doce", "ALIMENTO", false, null),
+                        new Product(null, "Shiitake", "ALIMENTO", false, null),
+                        new Product(null, "Cogumelo Ostra", "ALIMENTO/RACAO", false, null),
+                        new Product(null, "Peixe", "ALIMENTO", false, null),
+                        new Product(null, "Alcool", "ENERGIA", false, null),
+                        new Product(null, "Biomassa", "INSUMO", false, null),
+                        new Product(null, "Biofertilizante", "INSUMO", false, null),
+                        new Product(null, "Biogas", "ENERGIA", false, null)
                 ));
             }
 

@@ -1,5 +1,8 @@
 package com.sustentafome.sustentafome.dashboard;
 
+import com.sustentafome.sustentafome.donation.Alerta;
+import com.sustentafome.sustentafome.donation.AlertaRepository;
+import com.sustentafome.sustentafome.donation.AlertaTipo;
 import com.sustentafome.sustentafome.donation.PedidoDoacaoRepository;
 import com.sustentafome.sustentafome.donation.PedidoStatus;
 import com.sustentafome.sustentafome.energy.*;
@@ -28,6 +31,7 @@ public class DashboardService {
     private final ConsumoEnergiaRepository consumoEnergiaRepository;
     private final ProducaoBiogasRepository biogasRepository;
     private final RecirculacaoCO2Repository recirculacaoCO2Repository;
+    private final AlertaRepository alertaRepository;
 
     public Map<String, Object> producao(LocalDate inicio, LocalDate fim) {
         List<LoteProducao> lotes = loteRepository.findByPeriodo(inicio, fim);
@@ -64,14 +68,18 @@ public class DashboardService {
 
     public Map<String, Object> alertas() {
         Map<String, Object> resp = new HashMap<>();
-        var lowStock = itemEstoqueRepository.findAll().stream()
-                .filter(i -> i.getQuantidade() != null && i.getQuantidade().doubleValue() < 50)
-                .map(i -> i.getProduto().getNome())
-                .distinct()
+        var lowStock = alertaRepository.findAll().stream()
+                .filter(a -> !a.isResolvido() && a.getTipo() == AlertaTipo.ESTOQUE_CRITICO)
+                .map(Alerta::getMensagem)
+                .toList();
+        var validade = alertaRepository.findAll().stream()
+                .filter(a -> !a.isResolvido() && a.getTipo() == AlertaTipo.EXPIRACAO_ESTOQUE)
+                .map(Alerta::getMensagem)
                 .toList();
         var pedidosAtrasados = pedidoRepository.findByStatus(PedidoStatus.RESERVADO).stream().map(p -> p.getId()).toList();
         var unidadesParadas = unidadeRepository.findAll().stream().filter(u -> !u.isAtiva()).map(u -> u.getNome()).toList();
-        resp.put("estoqueBaixo", lowStock);
+        resp.put("estoque", lowStock);
+        resp.put("validade", validade);
         resp.put("pedidosAtrasados", pedidosAtrasados);
         resp.put("unidadesParadas", unidadesParadas);
         return resp;

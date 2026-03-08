@@ -6,7 +6,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile("!local")
+@Profile({"prod","stage","azure"})
 public class DbHealthCheckRunner implements CommandLineRunner {
 
     private final JdbcTemplate jdbcTemplate;

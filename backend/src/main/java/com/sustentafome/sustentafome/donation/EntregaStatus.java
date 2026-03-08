@@ -1,7 +1,8 @@
 package com.sustentafome.sustentafome.donation;
 
 public enum EntregaStatus {
-    PENDENTE,
+    CRIADO,
+    SEPARADO,
     EM_ROTA,
     ENTREGUE
 }

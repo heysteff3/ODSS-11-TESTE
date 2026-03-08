@@ -1,5 +1,6 @@
 package com.sustentafome.sustentafome.energy;
 
+import com.sustentafome.sustentafome.common.Auditable;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,7 +12,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class GeracaoEnergia {
+public class GeracaoEnergia extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

@@ -1,5 +1,6 @@
 package com.sustentafome.sustentafome.inventory;
 
+import com.sustentafome.sustentafome.common.Auditable;
 import com.sustentafome.sustentafome.donation.PedidoDoacao;
 import com.sustentafome.sustentafome.production.LoteProducao;
 import com.sustentafome.sustentafome.production.Product;
@@ -15,10 +16,13 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class ReservaEstoque {
+public class ReservaEstoque extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne(optional = false)
+    private Armazem armazem;
 
     @ManyToOne(optional = false)
     private Product produto;
@@ -29,6 +33,7 @@ public class ReservaEstoque {
     @Enumerated(EnumType.STRING)
     private ReservaStatus status;
 
+    @Column(precision = 19, scale = 4)
     private BigDecimal quantidade;
     private LocalDateTime dataReserva;
 

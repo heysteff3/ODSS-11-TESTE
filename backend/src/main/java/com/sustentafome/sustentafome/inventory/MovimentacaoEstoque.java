@@ -1,5 +1,6 @@
 package com.sustentafome.sustentafome.inventory;
 
+import com.sustentafome.sustentafome.common.Auditable;
 import com.sustentafome.sustentafome.production.LoteProducao;
 import com.sustentafome.sustentafome.production.Product;
 import jakarta.persistence.*;
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class MovimentacaoEstoque {
+public class MovimentacaoEstoque extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -31,6 +32,7 @@ public class MovimentacaoEstoque {
     @Enumerated(EnumType.STRING)
     private MovementType tipo;
 
+    @Column(precision = 19, scale = 4)
     private BigDecimal quantidade;
     private LocalDateTime dataMovimentacao;
     private String motivo;
