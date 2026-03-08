@@ -1,4 +1,4 @@
-﻿# SustentaFome
+# SustentaFome
 
 Plataforma web para rastrear producao, estoque, logistica de doacoes e cadeia energetica (biodigestor, biogas, geracao/consumo e recirculacao de CO2) em um ecossistema circular.
 
